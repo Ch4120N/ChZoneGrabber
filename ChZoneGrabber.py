@@ -49,6 +49,7 @@ class ChZoneGrabber:
             MsgDCR.InfoMessage(f'The \'{Config._config_file}\' file generated!')
         
         self.config = read_cfg()
+        self.data = None
 
         if self.config['ZHE'] and self.config['PHPSESSID']:
             self.data = {
@@ -83,13 +84,20 @@ class ChZoneGrabber:
 
             if choose == 1:
                 self.grab_archives()
-
+    
     def grab_archives(self):
         self.clear_screen()
         Banner()
+
+        if not self.data:
+            MsgDCR.FailureMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
+            self.back2menu_prompt()
+            return
+
         file_name = self.prompt('Enter your file name (e,g. Alex): ')
         self.clear_screen()
         Banner()
+
         for pages in range(self.config['max_pages']):
             response = requests.get(url=f'https://www.zone-h.org/archive/page={pages}', cookies=self.data)
             response_content = response.content.decode()

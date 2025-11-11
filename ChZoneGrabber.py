@@ -18,6 +18,7 @@
 import os
 import sys
 import re
+import datetime
 import threading
 import signal
 
@@ -49,6 +50,8 @@ class ChZoneGrabber:
             MsgDCR.InfoMessage(f'The \'{Config._config_file}\' file generated!')
         
         self.config = read_cfg()
+        self.output_dir = self.config['output_dir']
+        self.time_date = self.config['time_date']
         self.data = None
 
         if self.config['ZHE'] and self.config['PHPSESSID']:
@@ -72,6 +75,9 @@ class ChZoneGrabber:
         with open(file=file_name, mode='a+') as fw:
             fw.write(data)
     
+    def time_now(self):
+        return datetime.now().strftime("%Y-%m-%d_%H-%M")
+
     def run(self):
         while True:
             self.clear_screen()
@@ -108,7 +114,7 @@ class ChZoneGrabber:
                     filtered_url = url.replace('...', '')
                     correct_url = filtered_url.split('/')[0]
                     MsgDCR.GeneralMessage(f'-  {(correct_url)}')
-                    self.append_file(file_name, f'https://{correct_url}\n')
+                    self.append_file(f'{self.output_dir}{file_name}{self.time_now() if self.time_date else ''}.txt', f'https://{correct_url}\n')
 
         self.back2menu_prompt()
 

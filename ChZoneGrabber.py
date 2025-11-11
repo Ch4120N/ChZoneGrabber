@@ -63,6 +63,10 @@ class ChZoneGrabber:
         print(MsgDCR.InputMessage(RequestMessage), end='', flush=True)
         return input()
     
+    def back2menu_prompt(self):
+        print('\n')
+        self.prompt(f'Press {Fore.LIGHTBLUE_EX}[ {Fore.LIGHTRED_EX}ENTER {Fore.LIGHTBLUE_EX}]{Fore.LIGHTWHITE_EX} key for back to menu ...')
+    
     def append_file(self, file_name: str, data: str):
         with open(file=file_name, mode='a+') as fw:
             fw.write(data)
@@ -78,8 +82,27 @@ class ChZoneGrabber:
             choose = int(self.prompt('Select [1-7]: '))
 
             if choose == 1:
-                pass
+                self.grab_archives()
 
+    def grab_archives(self):
+        self.clear_screen()
+        Banner()
+        file_name = self.prompt('Enter your file name (e,g. Alex): ')
+        self.clear_screen()
+        Banner()
+        for pages in range(self.config['max_pages']):
+            response = requests.get(url=f'https://www.zone-h.org/archive/page={pages}', cookies=self.data)
+            response_content = response.content.decode()
+            MsgDCR.SectionMessage(f'Fetching Zone-H page {pages}: https://www.zone-h.org/archive/page={pages}')
+            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
+            if '/mirror/id/' in response_content:
+                for url in urls:
+                    filtered_url = url.replace('...', '')
+                    correct_url = filtered_url.split('/')[0]
+                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
+                    self.append_file(file_name, f'https://{correct_url}\n')
+
+        self.back2menu_prompt()
 
 if __name__ == '__main__':
     app = ChZoneGrabber()

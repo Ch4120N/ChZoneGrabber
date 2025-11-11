@@ -20,6 +20,7 @@ def read_cfg():
     try:
         output_dir = config.get('CONFIG', 'output_dir', fallback='reports/')
         time_date = config.getboolean('CONFIG', 'time_date', fallback=True)
+        max_pages = config.getboolean('CONFIG', 'max_pages', fallback=50)
         ZHE_cookie = config.get('ZONE-H CONFIG', 'ZHE', fallback=None)
         PHPSESSID_cookie = config.get('ZONE-H CONFIG', 'PHPSESSID', fallback=None)
     except Exception:
@@ -29,6 +30,7 @@ def read_cfg():
     return {
         'output_dir': output_dir,
         'time_date': time_date,
+        'max_pages': max_pages,
         'ZHE': ZHE_cookie,
         'PHPSESSID': PHPSESSID_cookie
     }
@@ -39,7 +41,9 @@ def write_cfg():
     _configs += ' # The output files are placed inside this directory.\n'
     _configs += 'output_dir = reports/\n'
     _configs += ' # The time and date are added after the name of each file.\n'
-    _configs += 'time_date = true\n\n\n'
+    _configs += 'time_date = true\n'
+    _configs += '# maximum number of pages for crawling\n'
+    _configs += 'max_pages = 50\n\n\n'
     _configs += '# You definitely need to define these two variables in order to be able to do this.\n'
     _configs += '# Read the project\'s documentation file: "README.md" \n'
     _configs += '# Or\n'

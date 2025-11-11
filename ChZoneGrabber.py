@@ -17,6 +17,7 @@
 
 import os
 import sys
+import re
 import threading
 import signal
 
@@ -32,7 +33,7 @@ except ImportError:
              '\t- python -m pip install -r requirements.txt\n'
             )
 
-from ui.banner import Banner
+from ui.banner import Banner, Menu
 from ui.decorators import MsgDCR
 from core.config_parser import read_cfg, write_cfg
 from core.config import Config
@@ -48,13 +49,36 @@ class ChZoneGrabber:
             MsgDCR.InfoMessage(f'The \'{Config._config_file}\' file generated!')
         
         self.config = read_cfg()
+
+        if self.config['ZHE'] and self.config['PHPSESSID']:
+            self.data = {
+                'ZHE': self.config['ZHE'],
+                'PHPSESSID': self.config['PHPSESSID']
+            }
     
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
     
+    def prompt(self, RequestMessage: str):
+        print(MsgDCR.InputMessage(RequestMessage), end='', flush=True)
+        return input()
+    
+    def append_file(self, file_name: str, data: str):
+        with open(file=file_name, mode='a+') as fw:
+            fw.write(data)
+    
     def run(self):
-        if not self.config['ZHE'] or not self.config['PHPSESSID']:
-            MsgDCR.WarningMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
+        while True:
+            self.clear_screen()
+            Banner()
+            if not self.config['ZHE'] or not self.config['PHPSESSID']:
+                MsgDCR.WarningMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.\n')
+            Menu()
+
+            choose = int(self.prompt('Select [1-7]: '))
+
+            if choose == 1:
+                pass
 
 
 if __name__ == '__main__':

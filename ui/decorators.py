@@ -23,6 +23,9 @@ class StatusDecorator:
         self.INFO = Style.BRIGHT + Fore.CYAN + \
             "\n [ " + Style.BRIGHT + Fore.WHITE + "*" + \
             Style.BRIGHT + Fore.CYAN + " ] " + Style.RESET_ALL
+        self.INPUT = Style.BRIGHT + Fore.CYAN + \
+            "\n [ " + Style.BRIGHT + Fore.MAGENTA + ">" + \
+            Style.BRIGHT + Fore.CYAN + " ] " + Style.RESET_ALL
         self.STDS = "           "
 
 class MessageDecorator(StatusDecorator):
@@ -43,5 +46,8 @@ class MessageDecorator(StatusDecorator):
 
     def GeneralMessage(self, RequestMessage):
         print(self.STDS + Style.RESET_ALL + RequestMessage)
+
+    def InputMessage(self, RequestMessage:str):
+        return self.INPUT + Style.BRIGHT + Fore.WHITE + RequestMessage + Style.RESET_ALL
 
 MsgDCR = MessageDecorator()

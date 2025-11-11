@@ -18,7 +18,8 @@
 import os
 import sys
 import argparse
-
+import threading
+import signal
 try:
     import requests
     from colorama import Fore, init
@@ -31,3 +32,14 @@ except ImportError:
              '\t- python -m pip install -r requirements.txt\n'
             )
 
+from ui.banner import Banner
+from ui.decorators import MsgDCR
+
+
+
+class ChZoneGrabber:
+    def __init__(self):
+        pass
+
+    def run(self):
+        pass

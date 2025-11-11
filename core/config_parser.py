@@ -20,8 +20,8 @@ def read_cfg():
     try:
         output_dir = config.get('CONFIG', 'output_dir', fallback='reports/')
         time_date = config.getboolean('CONFIG', 'time_date', fallback=True)
-        ZHE_cookie = config.get('ZONE-H CONFIG', 'ZHE', fallback='')
-        PHPSESSID_cookie = config.get('ZONE-H CONFIG', 'PHPSESSID', fallback='')
+        ZHE_cookie = config.get('ZONE-H CONFIG', 'ZHE', fallback=None)
+        PHPSESSID_cookie = config.get('ZONE-H CONFIG', 'PHPSESSID', fallback=None)
     except Exception:
         MsgDCR.FailureMessage('Error on accessing config values')
         sys.exit(2)
@@ -36,8 +36,10 @@ def read_cfg():
 def write_cfg():
     """Create or update a CFG file."""
     _configs = '[CONFIG]\n'
-    _configs += 'output_dir = reports/ # The output files are placed inside this directory.\n'
-    _configs += 'time_date = true # The time and date are added after the name of each file.\n\n\n'
+    _configs += ' # The output files are placed inside this directory.\n'
+    _configs += 'output_dir = reports/\n'
+    _configs += ' # The time and date are added after the name of each file.\n'
+    _configs += 'time_date = true\n\n\n'
     _configs += '# You definitely need to define these two variables in order to be able to do this.\n'
     _configs += '# Read the project\'s documentation file: "README.md" \n'
     _configs += '# Or\n'

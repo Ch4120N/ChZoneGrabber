@@ -17,9 +17,9 @@
 
 import os
 import sys
-import argparse
 import threading
 import signal
+
 try:
     import requests
     from colorama import Fore, init
@@ -34,12 +34,30 @@ except ImportError:
 
 from ui.banner import Banner
 from ui.decorators import MsgDCR
-
+from core.config_parser import read_cfg, write_cfg
+from core.config import Config
 
 
 class ChZoneGrabber:
     def __init__(self):
-        pass
-
+        self.clear_screen()
+        Banner()
+        if not os.path.exists(Config._config_file):
+            MsgDCR.WarningMessage(f'Configuration file \'{Config._config_file}\' not found. Generating new ...')
+            write_cfg()
+            MsgDCR.InfoMessage(f'The \'{Config._config_file}\' file generated!')
+        
+        self.config = read_cfg()
+    
+    def clear_screen(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+    
     def run(self):
-        pass
+        if not self.config['ZHE'] or not self.config['PHPSESSID']:
+            MsgDCR.WarningMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
+
+
+if __name__ == '__main__':
+    app = ChZoneGrabber()
+    app.run()
+

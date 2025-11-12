@@ -33,3 +33,18 @@ def read_cfg():
         'PHPSESSID': PHPSESSID_cookie
     }
 
+def write_cfg():
+    """Create or update a CFG file."""
+    _configs = '[CONFIG]\n'
+    _configs += 'output_dir = reports/ # The output files are placed inside this directory.\n'
+    _configs += 'time_date = true # The time and date are added after the name of each file.\n\n\n'
+    _configs += '# You definitely need to define these two variables in order to be able to do this.\n'
+    _configs += '# Read the project\'s documentation file: "README.md" \n'
+    _configs += '# Or\n'
+    _configs += '# visit this page: https://github.com/Ch4120N/ChZoneGrabber\n'
+    _configs += '[ZONE-H CONFIG]\n'
+    _configs += 'ZHE = \n'
+    _configs += 'PHPSESSID = \n'
+
+    with open(Config._config_file, "w") as config_file:
+        config_file.write(_configs)

@@ -1,4 +1,4 @@
-# =*= coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # core/useragents.py
 
 import random

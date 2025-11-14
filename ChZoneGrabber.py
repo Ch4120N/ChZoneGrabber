@@ -19,6 +19,7 @@ import os
 import sys
 import re
 import datetime
+import time
 import threading
 import signal
 
@@ -96,7 +97,8 @@ class ChZoneGrabber:
 
             if choose == 1:
                 self.grab_archives()
-            
+            elif choose == 2:
+                self.grab_specials()
             elif choose == 6:
                 self.change_settings()
     
@@ -133,15 +135,14 @@ class ChZoneGrabber:
             ZHE=zhe,
             PHPSESSID=phpsessid
         )
-        
+
         self.banner()
         MsgDCR.SuccessMessage('Configurations successfully set')
         self.back2menu_prompt()
 
 
     def grab_archives(self):
-        self.clear_screen()
-        Banner()
+        self.banner()
 
         if not self.data:
             MsgDCR.FailureMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
@@ -149,22 +150,55 @@ class ChZoneGrabber:
             return
 
         file_name = self.prompt('Enter your file name (e,g. Alex): ')
-        self.clear_screen()
-        Banner()
+        file_name = f'{self.output_dir}{file_name}{(self.time_now() if self.time_date else "")}.txt'
+        self.banner()
+        MsgDCR.InfoMessage(f'The extracted URLs will be saved into {file_name}')
+        time.sleep(2)
+        self.banner()
 
         for pages in range(self.config['max_pages']):
             response = requests.get(url=f'https://www.zone-h.org/archive/page={pages}', cookies=self.data)
             response_content = response.content.decode()
-            MsgDCR.SectionMessage(f'Fetching Zone-H page {pages}: https://www.zone-h.org/archive/page={pages}')
+            MsgDCR.SectionMessage(f'Fetching Zone-H Archive pages {pages}: https://www.zone-h.org/archive/page={pages}')
             urls = re.findall('<td>(.*)\n\s+</td>', response_content)
             if '/mirror/id/' in response_content:
                 for url in urls:
                     filtered_url = url.replace('...', '')
                     correct_url = filtered_url.split('/')[0]
                     MsgDCR.GeneralMessage(f'-  {(correct_url)}')
-                    self.append_file(f'{self.output_dir}{file_name}{(self.time_now() if self.time_date else "")}.txt', f'https://{correct_url}\n')
+                    self.append_file(file_name, f'https://{correct_url}\n')
 
         self.back2menu_prompt()
+
+    def grab_specials(self):
+        self.banner()
+
+        if not self.data:
+            MsgDCR.FailureMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
+            self.back2menu_prompt()
+            return
+
+        file_name = self.prompt('Enter your file name (e,g. Alex): ')
+        file_name = f'{self.output_dir}{file_name}{(self.time_now() if self.time_date else "")}.txt'
+        self.banner()
+        MsgDCR.InfoMessage(f'The extracted URLs will be saved into {file_name}')
+        time.sleep(2)
+        self.banner()
+
+        for pages in range(self.config['max_pages']):
+            response = requests.get(url=f'https://www.zone-h.org/archive/special=1/page={pages}', cookies=self.data)
+            response_content = response.content.decode()
+            MsgDCR.SectionMessage(f'Fetching Zone-H Special pages {pages}: https://www.zone-h.org/archive/special=1/page={pages}')
+            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
+            if '/mirror/id/' in response_content:
+                for url in urls:
+                    filtered_url = url.replace('...', '')
+                    correct_url = filtered_url.split('/')[0]
+                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
+                    self.append_file(file_name, f'https://{correct_url}\n')
+
+        self.back2menu_prompt()
+
 
 if __name__ == '__main__':
     app = ChZoneGrabber()

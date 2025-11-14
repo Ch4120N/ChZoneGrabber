@@ -36,7 +36,7 @@ except ImportError:
 
 from ui.banner import Banner, Menu
 from ui.decorators import MsgDCR
-from core.config_parser import read_cfg, write_cfg
+from core.config_parser import read_cfg, write_cfg, modify_cfg
 from core.config import Config
 
 
@@ -54,12 +54,8 @@ class ChZoneGrabber:
         self.time_date = self.config['time_date']
         self.data = None
 
-        if self.config['ZHE'] and self.config['PHPSESSID']:
-            self.data = {
-                'ZHE': self.config['ZHE'],
-                'PHPSESSID': self.config['PHPSESSID']
-            }
-    
+        self.check_required_configs()
+
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
     
@@ -77,12 +73,22 @@ class ChZoneGrabber:
     
     def time_now(self):
         return datetime.now().strftime("%Y-%m-%d_%H-%M")
-
+    
+    def banner(self):
+        self.clear_screen()
+        Banner()
+    
+    def check_required_configs(self):
+        if self.config['ZHE'] and self.config['PHPSESSID']:
+            self.data = {
+                'ZHE': self.config['ZHE'],
+                'PHPSESSID': self.config['PHPSESSID']
+            }
     def run(self):
         while True:
-            self.clear_screen()
-            Banner()
-            if not self.config['ZHE'] or not self.config['PHPSESSID']:
+            self.banner()
+            self.check_required_configs()
+            if not self.data:
                 MsgDCR.WarningMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.\n')
             Menu()
 
@@ -90,7 +96,46 @@ class ChZoneGrabber:
 
             if choose == 1:
                 self.grab_archives()
+            
+            elif choose == 6:
+                self.change_settings()
     
+    def change_settings(self):
+        self.banner()
+        max_pages = self.prompt('Enter max pages to crawl (e.g, 50, Default): ')
+ 
+        if not max_pages:
+            max_pages = 50
+        
+        elif not max_pages.isdigit():
+            MsgDCR.FailureMessage('Please enter valid number')
+            self.back2menu_prompt()
+            self.change_settings()
+        
+        self.banner()
+        zhe = self.prompt('Enter your ZHE (e.g, 098f6bcd4621d373cade4e832627b4f6): ')
+
+        if not zhe:
+            MsgDCR.FailureMessage('The ZHE is required for grabbing urls!')
+            self.back2menu_prompt()
+            self.change_settings()
+
+        self.banner()
+        phpsessid = self.prompt('Enter your PHPSESSID (e.g, ovfjv1un3ha1o470qj1a4u6hgv): ')
+        
+        if not phpsessid:
+            MsgDCR.FailureMessage('The PHPSESSID is required for grabbing urls!')
+            self.back2menu_prompt()
+            self.change_settings()
+        
+        modify_cfg('CONFIG', 'max_pages', str(max_pages))
+        modify_cfg('ZONE-H CONFIG', 'ZHE', zhe)
+        modify_cfg('ZONE-H CONFIG', 'PHPSESSID', phpsessid)
+        self.banner()
+        MsgDCR.SuccessMessage('Configurations successfully set')
+        self.back2menu_prompt()
+
+
     def grab_archives(self):
         self.clear_screen()
         Banner()
@@ -114,7 +159,7 @@ class ChZoneGrabber:
                     filtered_url = url.replace('...', '')
                     correct_url = filtered_url.split('/')[0]
                     MsgDCR.GeneralMessage(f'-  {(correct_url)}')
-                    self.append_file(f'{self.output_dir}{file_name}{self.time_now() if self.time_date else ''}.txt', f'https://{correct_url}\n')
+                    self.append_file(f'{self.output_dir}{file_name}{(self.time_now() if self.time_date else "")}.txt', f'https://{correct_url}\n')
 
         self.back2menu_prompt()
 

@@ -80,6 +80,7 @@ class ChZoneGrabber:
         Banner()
     
     def check_required_configs(self):
+        self.config = read_cfg() # Read Config.cfg file again
         if self.config['ZHE'] and self.config['PHPSESSID']:
             self.data = {
                 'ZHE': self.config['ZHE'],

@@ -2,10 +2,6 @@
 # core/config.py
 
 
-
-
-
-
 class Config:
     _config_file = 'config.cfg'
     _referer = 'https://www.zone-h.org/archive/published=0'

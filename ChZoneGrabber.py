@@ -36,7 +36,7 @@ except ImportError:
 
 from ui.banner import Banner, Menu
 from ui.decorators import MsgDCR
-from core.config_parser import read_cfg, write_cfg, modify_cfg
+from core.config_parser import read_cfg, write_cfg
 from core.config import Config
 
 
@@ -128,9 +128,12 @@ class ChZoneGrabber:
             self.back2menu_prompt()
             self.change_settings()
         
-        modify_cfg('CONFIG', 'max_pages', str(max_pages))
-        modify_cfg('ZONE-H CONFIG', 'ZHE', zhe)
-        modify_cfg('ZONE-H CONFIG', 'PHPSESSID', phpsessid)
+        write_cfg(
+            max_pages=int(max_pages),
+            ZHE=zhe,
+            PHPSESSID=phpsessid
+        )
+        
         self.banner()
         MsgDCR.SuccessMessage('Configurations successfully set')
         self.back2menu_prompt()

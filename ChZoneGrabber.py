@@ -18,10 +18,10 @@
 import os
 import sys
 import re
-import datetime
 import time
 import threading
 import signal
+from datetime import datetime
 
 try:
     import requests
@@ -86,6 +86,10 @@ class ChZoneGrabber:
                 'ZHE': self.config['ZHE'],
                 'PHPSESSID': self.config['PHPSESSID']
             }
+        
+        if not os.path.exists(self.config['output_dir']):
+            os.makedirs(self.config['output_dir'], exist_ok=True)
+        
     def run(self):
         while True:
             self.banner()

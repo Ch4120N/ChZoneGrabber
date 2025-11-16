@@ -43,6 +43,7 @@ from core.config import Config
 
 class ChZoneGrabber:
     def __init__(self):
+        signal.signal(signal.SIGINT, self.exit_on_sigint)
         self.clear_screen()
         Banner()
         if not os.path.exists(Config._config_file):
@@ -59,6 +60,11 @@ class ChZoneGrabber:
 
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
+    
+    def exit_on_sigint(self, frm, func):
+        print('\n')
+        MsgDCR.FailureMessage('Program Terminated By User!')
+        sys.exit(2)
     
     def prompt(self, RequestMessage: str):
         print(MsgDCR.InputMessage(RequestMessage), end='', flush=True)

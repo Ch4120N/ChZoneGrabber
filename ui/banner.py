@@ -23,13 +23,13 @@ def Banner():
 ''')
 
 def Menu():
-    bullet_gen = NumericBulletGenerator(prefix=' [ ', brackets_color='bright_red', numbers_color='yellow')
+    bullet_gen = NumericBulletGenerator(padding=1, prefix=' [ ', brackets_color='bright_red', numbers_color='yellow')
     time.sleep(0.1)
     print(bullet_gen.generate('Grab Archives'))
     time.sleep(0.1)
     print(bullet_gen.generate('Grab Specials'))
     time.sleep(0.1)
-    print(bullet_gen.generate('Grab Onholds'))
+    print(bullet_gen.generate('Grab OnHolds'))
     time.sleep(0.1)
     print(bullet_gen.generate('Grab Notifier'))
     time.sleep(0.1)

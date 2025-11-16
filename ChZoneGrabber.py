@@ -255,7 +255,7 @@ class ChZoneGrabber:
             notifier = self.prompt('Enter your Notifier name (e,g. Mr.ROBOT): ')
         notifier = f'{self.output_dir}{notifier}{(self.time_now() if self.time_date else "")}.txt'
         self.banner()
-        MsgDCR.InfoMessage(f'The extracted URLs will be saved into {file_name}')
+        MsgDCR.InfoMessage(f'The extracted URLs will be saved into {notifier}')
         time.sleep(2)
         self.banner()
 

@@ -89,6 +89,21 @@ class ChZoneGrabber:
         
         if not os.path.exists(self.config['output_dir']):
             os.makedirs(self.config['output_dir'], exist_ok=True)
+    
+    def request_zone(self, file_name: str, url: str, pages: int, shown_name: str):
+        try:
+            response = requests.get(url=url, cookies=self.data)
+            response_content = response.content.decode()
+            MsgDCR.SectionMessage(f'Fetching Zone-H {shown_name} pages {pages}: {url}')
+            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
+            if '/mirror/id/' in response_content:
+                for url in urls:
+                    filtered_url = url.replace('...', '')
+                    correct_url = filtered_url.split('/')[0]
+                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
+                    self.append_file(file_name, f'https://{correct_url}\n')
+        except (requests.RequestException, requests.ConnectionError, requests.ConnectTimeout):
+            MsgDCR.FailureMessage('Connection failed. Please check your connection')
         
     def run(self):
         while True:
@@ -170,17 +185,12 @@ class ChZoneGrabber:
         self.banner()
 
         for pages in range(self.config['max_pages']):
-            response = requests.get(url=f'https://www.zone-h.org/archive/page={pages}', cookies=self.data)
-            response_content = response.content.decode()
-            MsgDCR.SectionMessage(f'Fetching Zone-H Archive pages {pages}: https://www.zone-h.org/archive/page={pages}')
-            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
-            if '/mirror/id/' in response_content:
-                for url in urls:
-                    filtered_url = url.replace('...', '')
-                    correct_url = filtered_url.split('/')[0]
-                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
-                    self.append_file(file_name, f'https://{correct_url}\n')
-
+            self.request_zone(
+                file_name=file_name, 
+                url=f'https://www.zone-h.org/archive/page={pages}', 
+                pages=pages, 
+                shown_name='Archive'
+            )
         self.back2menu_prompt()
 
     def grab_specials(self, file_name: str = None):
@@ -200,17 +210,12 @@ class ChZoneGrabber:
         self.banner()
 
         for pages in range(self.config['max_pages']):
-            response = requests.get(url=f'https://www.zone-h.org/archive/special=1/page={pages}', cookies=self.data)
-            response_content = response.content.decode()
-            MsgDCR.SectionMessage(f'Fetching Zone-H Special pages {pages}: https://www.zone-h.org/archive/special=1/page={pages}')
-            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
-            if '/mirror/id/' in response_content:
-                for url in urls:
-                    filtered_url = url.replace('...', '')
-                    correct_url = filtered_url.split('/')[0]
-                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
-                    self.append_file(file_name, f'https://{correct_url}\n')
-
+            self.request_zone(
+                file_name=file_name, 
+                url=f'https://www.zone-h.org/archive/special=1/page={pages}', 
+                pages=pages, 
+                shown_name='Special'
+            )
         self.back2menu_prompt()
 
     def grab_onholds(self, file_name: str = None):
@@ -230,16 +235,12 @@ class ChZoneGrabber:
         self.banner()
 
         for pages in range(self.config['max_pages']):
-            response = requests.get(url=f'https://www.zone-h.org/archive/published=0/page={pages}', cookies=self.data)
-            response_content = response.content.decode()
-            MsgDCR.SectionMessage(f'Fetching Zone-H OnHold pages {pages}: https://www.zone-h.org/archive/published=0/page={pages}')
-            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
-            if '/mirror/id/' in response_content:
-                for url in urls:
-                    filtered_url = url.replace('...', '')
-                    correct_url = filtered_url.split('/')[0]
-                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
-                    self.append_file(file_name, f'https://{correct_url}\n')
+            self.request_zone(
+                file_name=file_name, 
+                url=f'https://www.zone-h.org/archive/published=0/page={pages}', 
+                pages=pages, 
+                shown_name='OnHold'
+            )
 
         self.back2menu_prompt()
     
@@ -260,17 +261,12 @@ class ChZoneGrabber:
         self.banner()
 
         for pages in range(self.config['max_pages']):
-            response = requests.get(url=f'https://www.zone-h.org/archive/notifier={notifier}/page={pages}', cookies=self.data)
-            response_content = response.content.decode()
-            MsgDCR.SectionMessage(f'Fetching Zone-H Notifier pages {pages}: https://www.zone-h.org/archive/notifier={notifier}/page={pages}')
-            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
-            if '/mirror/id/' in response_content:
-                for url in urls:
-                    filtered_url = url.replace('...', '')
-                    correct_url = filtered_url.split('/')[0]
-                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
-                    self.append_file(notifier, f'https://{correct_url}\n')
-
+            self.request_zone(
+                file_name=notifier, 
+                url=f'https://www.zone-h.org/archive/notifier={notifier}/page={pages}', 
+                pages=pages, 
+                shown_name='Special'
+            )
         self.back2menu_prompt()
 
 

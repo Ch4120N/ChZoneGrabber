@@ -104,9 +104,16 @@ class ChZoneGrabber:
                 self.grab_archives()
             elif choose == 2:
                 self.grab_specials()
-            elif choose == 6:
+            elif choose == 3:
+                self.grab_onholds()
+            elif choose == 4:
+                self.grab_notifier()
+            elif choose == 5:
                 self.change_settings()
-    
+            elif choose == 6:
+                MsgDCR.FailureMessage('Program Terminated By User!')
+                sys.exit(2)
+
     def change_settings(self):
         self.banner()
         max_pages = self.prompt('Enter max pages to crawl (e.g, 50, Default): ')
@@ -146,15 +153,16 @@ class ChZoneGrabber:
         self.back2menu_prompt()
 
 
-    def grab_archives(self):
+    def grab_archives(self, file_name: str = None):
         self.banner()
 
         if not self.data:
             MsgDCR.FailureMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
             self.back2menu_prompt()
             return
-
-        file_name = self.prompt('Enter your file name (e,g. Alex): ')
+        
+        if not file_name:
+            file_name = self.prompt('Enter your file name (e,g. Alex): ')
         file_name = f'{self.output_dir}{file_name}{(self.time_now() if self.time_date else "")}.txt'
         self.banner()
         MsgDCR.InfoMessage(f'The extracted URLs will be saved into {file_name}')
@@ -175,7 +183,7 @@ class ChZoneGrabber:
 
         self.back2menu_prompt()
 
-    def grab_specials(self):
+    def grab_specials(self, file_name: str = None):
         self.banner()
 
         if not self.data:
@@ -183,7 +191,8 @@ class ChZoneGrabber:
             self.back2menu_prompt()
             return
 
-        file_name = self.prompt('Enter your file name (e,g. Alex): ')
+        if not file_name:
+            file_name = self.prompt('Enter your file name (e,g. Alex): ')
         file_name = f'{self.output_dir}{file_name}{(self.time_now() if self.time_date else "")}.txt'
         self.banner()
         MsgDCR.InfoMessage(f'The extracted URLs will be saved into {file_name}')
@@ -201,6 +210,66 @@ class ChZoneGrabber:
                     correct_url = filtered_url.split('/')[0]
                     MsgDCR.GeneralMessage(f'-  {(correct_url)}')
                     self.append_file(file_name, f'https://{correct_url}\n')
+
+        self.back2menu_prompt()
+
+    def grab_onholds(self, file_name: str = None):
+        self.banner()
+        
+        if not self.data:
+            MsgDCR.FailureMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
+            self.back2menu_prompt()
+            return
+        
+        if not file_name:
+            file_name = self.prompt('Enter your file name (e,g. Alex): ')
+        file_name = f'{self.output_dir}{file_name}{(self.time_now() if self.time_date else "")}.txt'
+        self.banner()
+        MsgDCR.InfoMessage(f'The extracted URLs will be saved into {file_name}')
+        time.sleep(2)
+        self.banner()
+
+        for pages in range(self.config['max_pages']):
+            response = requests.get(url=f'https://www.zone-h.org/archive/published=0/page={pages}', cookies=self.data)
+            response_content = response.content.decode()
+            MsgDCR.SectionMessage(f'Fetching Zone-H OnHold pages {pages}: https://www.zone-h.org/archive/published=0/page={pages}')
+            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
+            if '/mirror/id/' in response_content:
+                for url in urls:
+                    filtered_url = url.replace('...', '')
+                    correct_url = filtered_url.split('/')[0]
+                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
+                    self.append_file(file_name, f'https://{correct_url}\n')
+
+        self.back2menu_prompt()
+    
+    def grab_notifier(self, notifier: str = None):
+        self.banner()
+        
+        if not self.data:
+            MsgDCR.FailureMessage('Some required settings are missing. Please set ZHE and PHPSESSID in the \'Settings\' menu.')
+            self.back2menu_prompt()
+            return
+        
+        if not notifier:
+            notifier = self.prompt('Enter your Notifier name (e,g. Mr.ROBOT): ')
+        notifier = f'{self.output_dir}{notifier}{(self.time_now() if self.time_date else "")}.txt'
+        self.banner()
+        MsgDCR.InfoMessage(f'The extracted URLs will be saved into {file_name}')
+        time.sleep(2)
+        self.banner()
+
+        for pages in range(self.config['max_pages']):
+            response = requests.get(url=f'https://www.zone-h.org/archive/notifier={notifier}/page={pages}', cookies=self.data)
+            response_content = response.content.decode()
+            MsgDCR.SectionMessage(f'Fetching Zone-H Notifier pages {pages}: https://www.zone-h.org/archive/notifier={notifier}/page={pages}')
+            urls = re.findall('<td>(.*)\n\s+</td>', response_content)
+            if '/mirror/id/' in response_content:
+                for url in urls:
+                    filtered_url = url.replace('...', '')
+                    correct_url = filtered_url.split('/')[0]
+                    MsgDCR.GeneralMessage(f'-  {(correct_url)}')
+                    self.append_file(notifier, f'https://{correct_url}\n')
 
         self.back2menu_prompt()
 

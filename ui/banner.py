@@ -33,8 +33,6 @@ def Menu():
     time.sleep(0.1)
     print(bullet_gen.generate('Grab Notifier'))
     time.sleep(0.1)
-    print(bullet_gen.generate('All (Archives, Specials, Onholds)'))
-    time.sleep(0.1)
     print(bullet_gen.generate('Settings'))
     time.sleep(0.1)  
     print(bullet_gen.generate('Exit'), '\n')

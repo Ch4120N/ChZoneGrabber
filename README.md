@@ -34,6 +34,11 @@
 - 💻 [Supported Platforms](#-supported-platforms)
 - ✨ [Features](#-features)
 - 💻 [Usage](#-usage)
+- ⚙️ [Configuration](#️-configuration)
+- 📊 [Output Files](#-output-files)
+- ❤️ [Support the Project](#️-support-the-project)
+- ⚠️ [Disclaimer](#️-disclaimer)
+- 🚨 [Reporting Issues](#-reporting-issues)
 
 ---
 
@@ -121,9 +126,6 @@ python3 ChZoneGrabber.py
 ---
 
 ## ✨ Features
-
-### 🎯 Core Capabilities
-
 - **🎨 Beautiful UI**: Colorful terminal interface with ASCII banners and formatted tables
 - **📝 Comprehensive Logging**: Detailed logs for successful urls and errors
 - **🛑 Graceful Shutdown**: Clean interruption handling with SIGINT support

@@ -57,7 +57,6 @@ class ChZoneGrabber:
         self.data = None
 
         self.check_required_configs()
-
     def clear_screen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
     
@@ -108,8 +107,8 @@ class ChZoneGrabber:
                     correct_url = filtered_url.split('/')[0]
                     MsgDCR.GeneralMessage(f'-  {(correct_url)}')
                     self.append_file(file_name, f'https://{correct_url}\n')
-        except (requests.RequestException, requests.ConnectionError, requests.ConnectTimeout):
-            MsgDCR.FailureMessage('Connection failed. Please check your connection')
+        except (requests.RequestException, requests.ConnectionError, requests.ConnectTimeout) as ex:
+            MsgDCR.FailureMessage(f'Connection failed. Please check your connection: {ex}')
         
     def run(self):
         while True:
@@ -195,6 +194,7 @@ class ChZoneGrabber:
         self.banner()
         MsgDCR.SuccessMessage('Configurations successfully set')
         self.back2menu_prompt()
+        return
 
 
     def grab_archives(self, file_name: str = None):
@@ -216,7 +216,7 @@ class ChZoneGrabber:
         for pages in range(self.config['max_pages']):
             self.request_zone(
                 file_name=file_name, 
-                url=f'https://www.zone-h.org/archive/page={pages}', 
+                url=f'http://www.zone-h.org/archive/page={pages}', 
                 pages=pages, 
                 shown_name='Archive'
             )
@@ -241,7 +241,7 @@ class ChZoneGrabber:
         for pages in range(self.config['max_pages']):
             self.request_zone(
                 file_name=file_name, 
-                url=f'https://www.zone-h.org/archive/special=1/page={pages}', 
+                url=f'http://www.zone-h.org/archive/special=1/page={pages}', 
                 pages=pages, 
                 shown_name='Special'
             )
@@ -266,7 +266,7 @@ class ChZoneGrabber:
         for pages in range(self.config['max_pages']):
             self.request_zone(
                 file_name=file_name, 
-                url=f'https://www.zone-h.org/archive/published=0/page={pages}', 
+                url=f'http://www.zone-h.org/archive/published=0/page={pages}', 
                 pages=pages, 
                 shown_name='OnHold'
             )
@@ -292,7 +292,7 @@ class ChZoneGrabber:
         for pages in range(self.config['max_pages']):
             self.request_zone(
                 file_name=notifier, 
-                url=f'https://www.zone-h.org/archive/notifier={notifier}/page={pages}', 
+                url=f'http://www.zone-h.org/archive/notifier={notifier}/page={pages}', 
                 pages=pages, 
                 shown_name='Notifier'
             )

@@ -137,6 +137,27 @@ class ChZoneGrabber:
 
     def change_settings(self):
         self.banner()
+        output_dir = self.prompt('Enter path of output directory (e.g, reports/ , Default): ').replace('\\', '/')
+
+        if not output_dir or output_dir == '':
+            output_dir = 'reports/'
+        
+        self.banner()
+        time_date = self.prompt('Do you want the date and time to be included in the file name? (Y/n): ').lower()
+ 
+        if not time_date or time_date == '':
+            time_date = True
+        
+        elif not time_date in ['y', 'yes', 'n', 'no']:
+            MsgDCR.FailureMessage('Please enter valid input (e.g, y/n)')
+            self.back2menu_prompt()
+            self.change_settings()
+        elif time_date in ['y', 'yes']:
+            time_date = True
+        elif time_date in ['n', 'no']:
+            time_date = False
+        
+        self.banner()
         max_pages = self.prompt('Enter max pages to crawl (e.g, 50, Default): ')
  
         if not max_pages:
@@ -164,6 +185,8 @@ class ChZoneGrabber:
             self.change_settings()
         
         write_cfg(
+            output_dir=output_dir,
+            time_date=time_date,
             max_pages=int(max_pages),
             ZHE=zhe,
             PHPSESSID=phpsessid

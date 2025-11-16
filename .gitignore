@@ -215,5 +215,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 # config file
-config.cfg
-config*
+*.cfg
+
+# reports folders
+reports/

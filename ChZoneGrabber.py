@@ -271,7 +271,7 @@ class ChZoneGrabber:
                 file_name=notifier, 
                 url=f'https://www.zone-h.org/archive/notifier={notifier}/page={pages}', 
                 pages=pages, 
-                shown_name='Special'
+                shown_name='Notifier'
             )
         self.back2menu_prompt()
 
